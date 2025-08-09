@@ -4,7 +4,7 @@ This project transcribes YouTube videos and generates AI-powered summaries of th
 
 ## Features
 
-- **YouTube Audio Downloader**: Downloads the audio from a YouTube video using `yt-dlp`, and extracts key metadata (title, uploader, date, description, duration).
+- **YouTube Audio Downloader**: Downloads the audio from a YouTube video using `yt-dlp`, and extracts key metadata (title, uploader, date, description, duration). (Includes a fix for the double file extension bug).
 - **Audio Transcription**: Transcribes audio using either a local Whisper model or the OpenAI API.
 - **AI-Powered Summarization**: Generates a summary of the transcription using the Gemini API, saving it as both a Markdown file and a styled, mobile-responsive HTML file that includes video metadata for easy and readable viewing.
 - **Caching**: Caches audio files, transcriptions, and summaries (both Markdown and HTML) to avoid re-processing the same video.
@@ -16,6 +16,7 @@ This project transcribes YouTube videos and generates AI-powered summaries of th
 - `main.py`: The main entry point for running the summarizer.
 - `core.py`: Contains the core logic for downloading, transcribing, and summarizing.
 - `storage.py`: Handles saving and loading of files (audio, transcripts, summaries, and metadata).
+- `html_generator.py`: Contains the logic for generating the styled HTML summary pages.
 - `data/`: The default directory for storing cached files, including:
     - `audio/`: Downloaded audio files.
     - `transcripts/`: Transcribed text.

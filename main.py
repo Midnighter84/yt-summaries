@@ -31,7 +31,7 @@ def main():
     )
 
     # Example usage:
-    youtube_url = "https://www.youtube.com/watch?v=kTMRo-0RL4U"
+    youtube_url = "https://www.youtube.com/watch?v=Wm9NLH5wZnE"
     prompt = "Provide a one-paragraph summary and a list of key takeaways from the following transcript. Please do this in the original language of the transcript."
 
     try:

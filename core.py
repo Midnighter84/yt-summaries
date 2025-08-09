@@ -6,6 +6,7 @@ import whisper
 import google.generativeai as genai
 import openai
 from storage import Storage
+from html_generator import generate_summary_html
 
 class YouTubeSummarizer:
     def __init__(self, storage: Storage, gemini_api_key: str, transcription_mode: str = 'local', openai_api_key: str = None):
@@ -33,6 +34,7 @@ class YouTubeSummarizer:
     def download_audio(self, youtube_url: str) -> Path:
         video_id = self.get_video_id(youtube_url)
         audio_path = self.storage.get_audio_path(video_id)
+        audio_path_without_ext = audio_path.with_suffix('')
 
         ydl_opts = {
             'format': 'bestaudio/best',
@@ -41,7 +43,7 @@ class YouTubeSummarizer:
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            'outtmpl': str(audio_path),
+            'outtmpl': str(audio_path_without_ext),
             'quiet': True,
         }
 
@@ -95,7 +97,8 @@ class YouTubeSummarizer:
         self.storage.save_summary(video_id, summary)
         
         metadata = self.storage.load_metadata(video_id)
-        self.storage.save_summary_html(video_id, summary, metadata)
+        html_content = generate_summary_html(video_id, summary, metadata)
+        self.storage.save_summary_html(video_id, html_content)
         
         return summary
 
