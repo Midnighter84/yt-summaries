@@ -2,3 +2,4 @@ yt-dlp
 openai-whisper
 google-generativeai
 openai
+firebase-admin

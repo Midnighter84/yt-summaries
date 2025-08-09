@@ -1,12 +1,14 @@
 import os
 from core import YouTubeSummarizer
-from storage import Storage
+from storage import LocalStorage, FirebaseStorage
 
 def main():
     # --- Configuration ---
     # Choose transcription mode: 'local' or 'cloud'
     TRANSCRIPTION_MODE = 'local' 
-    
+    # Choose storage mode: 'local' or 'firebase'
+    STORAGE_MODE = 'local'
+
     # TODO: Set your Gemini API key here.
     # You can get a key from https://aistudio.google.com/app/apikey
     gemini_api_key = os.environ.get("GEMINI_API_KEY", "")
@@ -22,7 +24,18 @@ def main():
         print("Please set the OPENAI_API_KEY environment variable or replace 'YOUR_API_KEY_HERE' in main.py.")
         return
 
-    storage = Storage()
+    # --- Storage Initialization ---
+    if STORAGE_MODE == 'local':
+        storage = LocalStorage()
+    elif STORAGE_MODE == 'firebase':
+        # TODO: Configure Firebase
+        FIREBASE_CRED_PATH = "path/to/your/firebase-credentials.json"
+        FIREBASE_BUCKET_NAME = "your-firebase-bucket-name"
+        local_cache = LocalStorage()
+        storage = FirebaseStorage(local_storage=local_cache, cred_path=FIREBASE_CRED_PATH, bucket_name=FIREBASE_BUCKET_NAME)
+    else:
+        raise ValueError(f"Invalid STORAGE_MODE: {STORAGE_MODE}")
+
     summarizer = YouTubeSummarizer(
         storage=storage,
         gemini_api_key=gemini_api_key,
@@ -31,7 +44,7 @@ def main():
     )
 
     # Example usage:
-    youtube_url = "https://www.youtube.com/watch?v=Wm9NLH5wZnE"
+    youtube_url = "https://www.youtube.com/watch?v=jmtvmbeBUnk"
     prompt = "Provide a one-paragraph summary and a list of key takeaways from the following transcript. Please do this in the original language of the transcript."
 
     try:

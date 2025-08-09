@@ -5,11 +5,11 @@ import yt_dlp
 import whisper
 import google.generativeai as genai
 import openai
-from storage import Storage
+from storage_interface import StorageInterface
 from html_generator import generate_summary_html
 
 class YouTubeSummarizer:
-    def __init__(self, storage: Storage, gemini_api_key: str, transcription_mode: str = 'local', openai_api_key: str = None):
+    def __init__(self, storage: StorageInterface, gemini_api_key: str, transcription_mode: str = 'local', openai_api_key: str = None):
         self.storage = storage
         self.transcription_mode = transcription_mode
 
