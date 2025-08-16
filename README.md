@@ -42,8 +42,12 @@ This project transcribes YouTube videos and generates AI-powered summaries of th
 
 4.  **Run the script:**
     ```bash
-    python3 main.py
+    python3 main.py <youtube_url>
     ```
+    Replace `<youtube_url>` with the actual YouTube video URL.
 
-5.  **Customize:**
-    - You can change the `youtube_url` and the summarization `prompt` in `main.py`.
+5.  **Output:**
+    The script will print the path to the generated HTML summary file upon successful completion.
+
+6.  **Customize:**
+    - You can change the summarization `prompt` in `main.py`.

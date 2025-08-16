@@ -1,8 +1,16 @@
 import os
+import argparse
 from core import YouTubeSummarizer
 from storage import LocalStorage, FirebaseStorage
 
 def main():
+    parser = argparse.ArgumentParser(description="Transcribe and summarize YouTube videos.")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--youtube_url", help="The URL of the YouTube video to process.")
+    group.add_argument("--channels", nargs='+', help="A list of YouTube channel IDs to process.")
+    parser.add_argument("--videos-per-channel", type=int, default=1, help="Number of recent videos to process per channel.")
+    args = parser.parse_args()
+
     # --- Configuration ---
     # Choose transcription mode: 'local' or 'cloud'
     TRANSCRIPTION_MODE = 'local' 
@@ -29,8 +37,8 @@ def main():
         storage = LocalStorage()
     elif STORAGE_MODE == 'firebase':
         # TODO: Configure Firebase
-        FIREBASE_CRED_PATH = "path/to/your/firebase-credentials.json"
-        FIREBASE_BUCKET_NAME = "your-firebase-bucket-name"
+        FIREBASE_CRED_PATH = "firebase-credentials.json"
+        FIREBASE_BUCKET_NAME = "gs://yt-summaries-1984.firebasestorage.app"
         local_cache = LocalStorage()
         storage = FirebaseStorage(local_storage=local_cache, cred_path=FIREBASE_CRED_PATH, bucket_name=FIREBASE_BUCKET_NAME)
     else:
@@ -43,14 +51,15 @@ def main():
         openai_api_key=openai_api_key
     )
 
-    # Example usage:
-    youtube_url = "https://www.youtube.com/watch?v=jmtvmbeBUnk"
     prompt = "Provide a one-paragraph summary and a list of key takeaways from the following transcript. Please do this in the original language of the transcript."
 
+    print(args)
     try:
-        summary = summarizer.process_video(youtube_url, prompt)
-        print("Summary:")
-        print(summary)
+        if args.youtube_url:
+            summary_file_path = summarizer.process_video(args.youtube_url, prompt)
+            print(f"Summary saved to: {summary_file_path}")
+        elif args.channels:
+            summarizer.process_channels(args.channels, args.videos_per_channel, prompt)
     except Exception as e:
         print(f"An error occurred: {e}")
 

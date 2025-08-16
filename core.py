@@ -102,14 +102,39 @@ class YouTubeSummarizer:
         
         return summary
 
-    def process_video(self, youtube_url: str, prompt: str) -> str:
+    def get_channel_videos(self, channel_url: str, count: int) -> list[str]:
+        print(f"Fetching latest {count} videos from channel: {channel_url}")
+        ydl_opts = {
+            'extract_flat': True,
+            'quiet': True,
+            'playlistend': count,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            result = ydl.extract_info(f"{channel_url}/videos", download=False)
+            if 'entries' in result:
+                return [f"https://www.youtube.com/watch?v={entry['id']}" for entry in result['entries']]
+        return []
+
+    def process_channels(self, channel_ids: list[str], videos_per_channel: int, prompt: str):
+        for channel_id in channel_ids:
+            channel_url = f"https://www.youtube.com/@{channel_id}"
+            video_urls = self.get_channel_videos(channel_url, videos_per_channel)
+            for video_url in video_urls:
+                try:
+                    summary_path = self.process_video(video_url, prompt)
+                    print(f"Processed video: {video_url}")
+                    print(f"Summary saved to: {summary_path}")
+                except Exception as e:
+                    print(f"Failed to process video {video_url}: {e}")
+
+    def process_video(self, youtube_url: str, prompt: str) -> Path:
         video_id = self.get_video_id(youtube_url)
         
         if self.storage.summary_exists(video_id):
             print(f"Summary for video {video_id} found in cache.")
-            return self.storage.load_summary(video_id)
+            return self.storage.get_summary_html_path(video_id)
 
         audio_path = self.download_audio(youtube_url)
         transcript = self.transcribe_audio(video_id, audio_path)
         summary = self.summarize_transcript(video_id, transcript, prompt)
-        return summary
+        return self.storage.get_summary_html_path(video_id)
