@@ -15,7 +15,7 @@ def main():
     # Choose transcription mode: 'local' or 'cloud'
     TRANSCRIPTION_MODE = 'local' 
     # Choose storage mode: 'local' or 'firebase'
-    STORAGE_MODE = 'local'
+    STORAGE_MODE = 'firebase'
 
     # TODO: Set your Gemini API key here.
     # You can get a key from https://aistudio.google.com/app/apikey
@@ -37,8 +37,8 @@ def main():
         storage = LocalStorage()
     elif STORAGE_MODE == 'firebase':
         # TODO: Configure Firebase
-        FIREBASE_CRED_PATH = "firebase-credentials.json"
-        FIREBASE_BUCKET_NAME = "gs://yt-summaries-1984.firebasestorage.app"
+        FIREBASE_CRED_PATH = "firebase-serviceaccount-credentials.json"
+        FIREBASE_BUCKET_NAME = "yt-summaries-1984.firebasestorage.app"
         local_cache = LocalStorage()
         storage = FirebaseStorage(local_storage=local_cache, cred_path=FIREBASE_CRED_PATH, bucket_name=FIREBASE_BUCKET_NAME)
     else:

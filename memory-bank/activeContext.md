@@ -1,35 +1,21 @@
 # Active Context: YouTube Summarizer (`yt-summaries`)
 
 ## Current work focus
-The current focus is on enhancing the `yt-summaries` project by:
--   Implementing a Firebase Storage backend with local caching.
--   Refactoring HTML generation into a dedicated module.
--   Adding command-line argument parsing for YouTube URLs.
--   Ensuring mobile responsiveness and improved styling for HTML summaries.
--   Extracting and displaying video metadata in HTML summaries.
--   Fixing the double `.mp3` file extension bug during audio download.
+The current focus is on building a web interface for the `yt-summaries` project.
 
 ## Recent changes
--   Added functionality to process the most recent videos from a list of YouTube channels.
--   Implemented `process_channels` and `get_channel_videos` methods in `core.py`.
--   Updated `main.py` to accept `--channels` and `--videos-per-channel` command-line arguments.
--   Introduced `storage_interface.py` for storage abstraction.
--   Refactored `storage.py` into `LocalStorage` and `FirebaseStorage` classes.
--   Moved HTML generation logic from `storage.py` to `html_generator.py`.
--   Updated `core.py` to use the new storage interface and HTML generator.
--   Modified `main.py` to accept YouTube URLs as command-line arguments and to configure storage/transcription modes.
--   Added `firebase-admin` to `requirements.txt`.
--   Updated `README.md` to reflect all new features, usage, and configuration.
--   Implemented metadata extraction and display in HTML summaries.
--   Added viewport meta tag and CSS for mobile responsiveness and improved readability in HTML summaries.
--   Fixed the `yt-dlp` `outtmpl` issue causing double `.mp3` extensions.
+-   Created a Firebase function `getSummaries` to list all video metadata.
+-   Created a Firebase function `getVideo` to get the metadata and summary for a single video.
+-   Created a web page (`index.html`) to display the list of videos.
+-   Created a web page (`video.html`) to display the details of a single video.
+-   Made the video blocks on the main page clickable, linking to the video details page.
+-   Added a hover effect to the video blocks to improve user experience.
+-   Configured Firebase Hosting to serve the web pages.
 
 ## Next steps
--   Update the rest of the memory bank to reflect the new channel processing functionality.
--   Verify the full functionality of the application with both local and Firebase storage modes.
--   Test transcription modes (local and cloud) thoroughly.
--   Ensure all caching mechanisms work as expected.
--   Confirm that HTML summaries are correctly generated, styled, and include metadata.
+-   Deploy the web interface to Firebase Hosting.
+-   Verify that the web interface is working correctly.
+-   Update the memory bank to reflect all the new changes.
 
 ## Active decisions and considerations
 -   The user will handle Firebase project setup and API key configuration.

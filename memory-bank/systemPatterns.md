@@ -6,6 +6,10 @@ The system follows a modular architecture, separating concerns into distinct com
 -   **Storage Abstraction (`storage_interface.py`, `storage.py`)**: Provides a flexible layer for data persistence. `StorageInterface` defines the contract, while `LocalStorage` handles local file operations and `FirebaseStorage` handles cloud storage with local caching.
 -   **HTML Generation (`html_generator.py`)**: Encapsulates the logic for creating styled HTML summaries from markdown content and video metadata.
 -   **Main Entry Point (`main.py`)**: Handles command-line arguments, configuration (API keys, transcription mode, storage mode), and initializes the core components.
+-   **Front-end (`firebase/public`)**: A static web page that provides a user interface for browsing and viewing summaries. It is built with HTML, CSS, and JavaScript.
+-   **Firebase Functions (`firebase/functions`)**: A set of serverless functions that provide data to the front-end.
+    -   `getSummaries`: Returns a list of all video metadata.
+    -   `getVideo`: Returns the metadata and summary for a single video.
 
 ## Key Technical Decisions
 -   **Caching**: Local filesystem is used as a primary cache for all processed data (audio, transcripts, summaries, metadata) to minimize redundant work and API calls.

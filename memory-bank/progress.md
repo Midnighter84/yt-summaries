@@ -9,12 +9,13 @@
 -   Command-line argument parsing for YouTube URL and channel URLs.
 -   Printing the path to the generated HTML summary file upon completion.
 -   Fixed double `.mp3` extension bug during audio download.
+-   A web interface to browse and view video summaries, hosted on Firebase.
+-   Firebase functions to provide data to the web interface.
 
 ## What's left to build
--   Further enhancements to HTML styling (e.g., more advanced CSS, responsive design improvements).
--   Error handling improvements (e.g., more specific error messages, graceful exits).
+-   Further enhancements to the web interface (e.g., search, filtering, pagination).
+-   Error handling improvements in the Firebase functions.
 -   Potentially adding more summarization prompts or allowing user-defined prompts via CLI.
--   Integration with a web interface for easier interaction.
 
 ## Current status
 The core functionality is robust and well-tested. The project is ready for use as a command-line tool, with options for both local and cloud services.

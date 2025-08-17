@@ -16,9 +16,11 @@ The primary goal of this project is to provide a tool that can:
 -   Extract and store YouTube video metadata.
 -   Accept a YouTube URL or a list of channel URLs as command-line arguments.
 -   Print the path to the generated summary file upon completion.
+-   Provide a web interface to browse and view video summaries.
 
 ## Project Goals
 -   **Efficiency**: Minimize re-processing by leveraging caching.
 -   **Flexibility**: Allow users to choose transcription and storage backends.
 -   **Readability**: Provide well-formatted and easily accessible summaries.
 -   **Maintainability**: Use a modular and extensible architecture.
+-   **Accessibility**: Offer a user-friendly web interface for browsing summaries.

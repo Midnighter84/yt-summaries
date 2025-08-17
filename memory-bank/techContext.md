@@ -8,7 +8,10 @@
 -   **Gemini API (Google)**: For AI-powered summarization.
 -   **`firebase-admin`**: For interacting with Firebase Storage.
 -   **`argparse`**: For command-line argument parsing.
--   **`marked.js`**: JavaScript library used in the generated HTML for client-side Markdown rendering.
+-   **Firebase Hosting**: For serving the web interface.
+-   **Firebase Functions**: For providing data to the web interface.
+-   **HTML5, CSS3, JavaScript (ES6)**: For the front-end web interface.
+-   **`marked.js`**: JavaScript library used for client-side Markdown rendering.
 
 ## Development Setup
 -   **Virtual Environments**: Recommended for managing Python dependencies (`venv` or `conda`).

@@ -12,8 +12,8 @@ __pycache__/
 # Firebase cache
 .firebase/
 
-# Ignore the whole firebase thing for now
-firebase/
+# Private key for the service account
+firebase-serviceaccount-credentials.json
 
 # All the data files, audio, transcripts, summaries
 data/
