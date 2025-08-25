@@ -4,6 +4,7 @@ from pathlib import Path
 import yt_dlp
 import whisper
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import openai
 from storage_interface import StorageInterface
 from html_generator import generate_summary_html
@@ -14,7 +15,7 @@ class YouTubeSummarizer:
         self.transcription_mode = transcription_mode
 
         genai.configure(api_key=gemini_api_key)
-        self.genai_model = genai.GenerativeModel('gemini-2.5-pro')
+        self.genai_model = genai.GenerativeModel('gemini-2.5-flash')
 
         if self.transcription_mode == 'local':
             self.whisper_model = whisper.load_model("base")
@@ -93,7 +94,22 @@ class YouTubeSummarizer:
     def summarize_transcript(self, video_id: str, transcript: str, prompt: str) -> str:
         print(f"Generating summary for video {video_id}...")
         full_prompt = f"{prompt}\n\n{transcript}"
-        summary = self.genai_model.generate_content(full_prompt).text
+        safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
+
+        generation_config = {"max_output_tokens": 512000}
+        try:
+            response = self.genai_model.generate_content(full_prompt, safety_settings=safety_settings, generation_config=generation_config)
+            summary = response.text
+        except Exception as e:
+            print(f"An error occurred during Gemini API call: {e}")
+            print("Full Gemini response:")
+            print(response)
+            raise
         self.storage.save_summary(video_id, summary)
         
         metadata = self.storage.load_metadata(video_id)

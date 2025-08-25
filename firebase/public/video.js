@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const videoDetails = document.getElementById("video-details");
+    const loader = document.getElementById("loader");
+    const archiveButtons = document.getElementById("archive-buttons");
     const urlParams = new URLSearchParams(window.location.search);
     const videoId = urlParams.get('video_id');
     const functionUrl = `https://us-central1-yt-summaries-1984.cloudfunctions.net/getVideo?video_id=${videoId}`;
@@ -19,7 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch(functionUrl)
         .then(response => response.json())
         .then(data => {
-            const { metadata, summary } = data;
+            loader.style.display = "none";
+            videoDetails.style.display = "block";
+
+            const { metadata, summary, is_archived } = data;
 
             let metadataHtml = "";
             if (metadata) {
@@ -50,9 +55,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
             videoDetails.innerHTML = metadataHtml;
             videoDetails.innerHTML += marked.parse(summary);
+
+            let current_is_archived = is_archived;
+            const archiveButton = document.createElement("button");
+            archiveButton.textContent = current_is_archived ? "Unarchive" : "Archive";
+            archiveButton.addEventListener("click", () => {
+                const action = current_is_archived ? "unarchive" : "archive";
+                const modifyUrl = `https://us-central1-yt-summaries-1984.cloudfunctions.net/modifyVideo?video_id=${videoId}&action=${action}`;
+                fetch(modifyUrl)
+                    .then(() => {
+                        current_is_archived = !current_is_archived;
+                        archiveButton.textContent = current_is_archived ? "Unarchive" : "Archive";
+                    })
+                    .catch(error => {
+                        console.error("Error modifying video:", error);
+                    });
+            });
+            archiveButtons.appendChild(archiveButton);
+
+            const backButton = document.createElement("button");
+            backButton.textContent = "Back to all videos";
+            backButton.addEventListener("click", () => {
+                window.location.href = "index.html";
+            });
+            archiveButtons.appendChild(backButton);
         })
         .catch(error => {
             console.error("Error fetching video details:", error);
-            videoDetails.innerHTML = "<p>Error loading video details. Please try again later.</p>";
+            loader.style.display = "none";
+            videoDetails.innerHTML = "<p>Could not load video.</p>";
+            videoDetails.style.display = "block";
+
+            let current_is_archived = false;
+            const archiveButton = document.createElement("button");
+            archiveButton.textContent = "Archive";
+            archiveButton.addEventListener("click", () => {
+                const action = current_is_archived ? "unarchive" : "archive";
+                const modifyUrl = `https://us-central1-yt-summaries-1984.cloudfunctions.net/modifyVideo?video_id=${videoId}&action=${action}`;
+                fetch(modifyUrl)
+                    .then(() => {
+                        current_is_archived = !current_is_archived;
+                        archiveButton.textContent = current_is_archived ? "Unarchive" : "Archive";
+                    })
+                    .catch(error => {
+                        console.error("Error modifying video:", error);
+                    });
+            });
+            archiveButtons.appendChild(archiveButton);
+
+            const backButton = document.createElement("button");
+            backButton.textContent = "Back to all videos";
+            backButton.addEventListener("click", () => {
+                window.location.href = "index.html";
+            });
+            archiveButtons.appendChild(backButton);
         });
 });

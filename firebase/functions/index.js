@@ -14,18 +14,27 @@ exports.getSummaries = onRequest((req, res) => {
 
       logger.info(`Found ${files.length} files in video-metadata/`);
 
-      const promises = files.map((file) => {
-        return new Promise((resolve, reject) => {
-          if (file.name.endsWith(".json")) {
-            const stream = file.createReadStream();
-            let buffer = "";
+      const db = admin.firestore();
+      const videoPropertiesCollection = db.collection("video_properties");
+
+      const promises = files.map(async (file) => {
+        if (file.name.endsWith(".json")) {
+          const videoId = file.name.split("/").pop().replace(".json", "");
+          const doc = await videoPropertiesCollection.doc(videoId).get();
+
+          if (doc.exists && doc.data().is_archived) {
+            return;
+          }
+
+          const stream = file.createReadStream();
+          let buffer = "";
+          await new Promise((resolve, reject) => {
             stream.on("data", (chunk) => {
               buffer += chunk.toString();
             });
             stream.on("end", () => {
               try {
                 const metadata = JSON.parse(buffer);
-                const videoId = file.name.split("/").pop().replace(".json", "");
                 metadata.id = videoId;
                 metadatas.push(metadata);
                 resolve();
@@ -38,13 +47,17 @@ exports.getSummaries = onRequest((req, res) => {
               logger.error(`Error reading file ${file.name}`, err);
               reject(err);
             });
-          } else {
-            resolve();
-          }
-        });
+          });
+        }
       });
 
       await Promise.all(promises);
+
+      metadatas.sort((a, b) => {
+        //const dateA = new Date(a.upload_date);
+        //const dateB = new Date(b.upload_date);
+        return b - a;
+      });
 
       logger.info(`Successfully processed ${metadatas.length} metadata files.`);
       res.status(200).json(metadatas);
@@ -88,9 +101,51 @@ exports.getVideo = onRequest((req, res) => {
       const metadata = JSON.parse(metadataBuffer.toString());
       const summary = summaryBuffer.toString();
 
-      res.status(200).json({ metadata, summary });
+      const db = admin.firestore();
+      const videoPropertiesRef = db.collection("video_properties").doc(videoId);
+      const doc = await videoPropertiesRef.get();
+
+      let isArchived = false;
+      if (doc.exists) {
+        isArchived = doc.data().is_archived || false;
+      }
+
+      res.status(200).json({ metadata, summary, is_archived: isArchived });
     } catch (error) {
       logger.error("Error getting video:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+});
+
+exports.modifyVideo = onRequest((req, res) => {
+  cors(req, res, async () => {
+    try {
+      const videoId = req.query.video_id;
+      const action = req.query.action;
+
+      if (!videoId || !action) {
+        res.status(400).send("Missing video_id or action parameter");
+        return;
+      }
+
+      if (action !== "archive" && action !== "unarchive") {
+        res.status(400).send("Invalid action parameter");
+        return;
+      }
+
+      const isArchived = action === "archive";
+
+      const db = admin.firestore();
+      const videoPropertiesRef = db.collection("video_properties").doc(videoId);
+
+      await videoPropertiesRef.set({
+        is_archived: isArchived,
+      }, { merge: true });
+
+      res.status(200).send(`Video ${videoId} has been ${action}d.`);
+    } catch (error) {
+      logger.error("Error modifying video:", error);
       res.status(500).send("Internal Server Error");
     }
   });

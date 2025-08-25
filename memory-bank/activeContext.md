@@ -1,9 +1,11 @@
 # Active Context: YouTube Summarizer (`yt-summaries`)
 
 ## Current work focus
-The current focus is on building a web interface for the `yt-summaries` project.
+The current focus is on improving the robustness and error handling of the core application.
 
 ## Recent changes
+-   Added detailed error logging to the Gemini API call in `core.py`. If the API call fails, the full response will be printed to the console for easier debugging.
+-   Modified the `getSummaries` Firebase function to sort the results by upload date in descending order.
 -   Created a Firebase function `getSummaries` to list all video metadata.
 -   Created a Firebase function `getVideo` to get the metadata and summary for a single video.
 -   Created a web page (`index.html`) to display the list of videos.

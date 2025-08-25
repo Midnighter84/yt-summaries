@@ -1,6 +1,7 @@
 # Progress: YouTube Summarizer (`yt-summaries`)
 
 ## What works
+-   Improved error handling for Gemini API calls in `core.py`.
 -   Core functionality: Downloading audio, transcribing, and generating AI summaries for single videos and recent videos from channels.
 -   Local caching for audio, transcripts, summaries (Markdown and HTML), and video metadata.
 -   Configurable transcription modes (local Whisper and OpenAI API).
@@ -10,7 +11,7 @@
 -   Printing the path to the generated HTML summary file upon completion.
 -   Fixed double `.mp3` extension bug during audio download.
 -   A web interface to browse and view video summaries, hosted on Firebase.
--   Firebase functions to provide data to the web interface.
+-   Firebase functions to provide data to the web interface. The `getSummaries` function now sorts the results by upload date.
 
 ## What's left to build
 -   Further enhancements to the web interface (e.g., search, filtering, pagination).

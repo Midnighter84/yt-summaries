@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const videoList = document.getElementById("video-list");
+    const loader = document.getElementById("loader");
     const functionUrl = "https://us-central1-yt-summaries-1984.cloudfunctions.net/getSummaries";
 
     const formatDuration = (seconds) => {
@@ -12,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch(functionUrl)
         .then(response => response.json())
         .then(data => {
+            loader.style.display = "none";
+            videoList.style.display = "block";
+
             if (data.length === 0) {
                 videoList.innerHTML = "<p>No summaries found.</p>";
                 return;
@@ -52,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => {
             console.error("Error fetching summaries:", error);
+            loader.style.display = "none";
             videoList.innerHTML = "<p>Error loading summaries. Please try again later.</p>";
         });
 });
